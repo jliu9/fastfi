@@ -62,6 +62,10 @@ static UINT64 tit           = 0;    // iteration at target IP address
 static UINT64 dip           = 0;    // detach IP address
 static UINT64 dit           = 0;    // iteration at detach IP address
 
+using std::map;
+using std::vector;
+using std::string;
+
 static map<UINT64, UINT64> ip_iters;
 static map<UINT64, string> ip_infos;
 static vector<string> func;         // functions to find
@@ -658,12 +662,13 @@ instrument_wreg(INS ins, VOID* v)
 
 static VOID
 instruction_info(CONTEXT* ctx, THREADID id, ADDRINT ip) {
+  // fprintf(stderr, "instruction_info right_thread?:%ld id:%d\n", right_thread(id), id);
   if (!right_thread(id)) return;
 
   if (!ip_iters.count(ip)) ip_iters[ip] = 0;
   ++ip_iters[ip];
             
-  fprintf(stderr, "ip: 0x%lX"SEPARATOR"iteration: %ld%s\n", ip, ip_iters[ip], ip_infos[ip].c_str()); 
+  fprintf(stderr, "ip: 0x%lX" SEPARATOR "iteration: %ld%s\n", ip, ip_iters[ip], ip_infos[ip].c_str());
 #ifdef VERBOSE_INFO  
   fprintf(stderr, "[");
   for (UINT32 i = REG_GR_BASE; i <= REG_GR_LAST; ++i) {
